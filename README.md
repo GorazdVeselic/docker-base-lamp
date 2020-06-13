@@ -21,3 +21,10 @@ $ cd .docker
 $ docker-compose up -d
 ```
 
+Put index.php file with some HTML code in '/new_project/src/' folder 
+```sh
+cd ..
+cd src
+touch index.php
+echo "Hello world" >> index.php
+```
