@@ -1,0 +1,60 @@
+version: "3.7"
+
+volumes:
+  mysql-data:
+
+services:
+
+  mysql:
+    image: mysql:8.0.19
+    container_name: ${COMPOSE_PROJECT_NAME}_mysql
+    # image: mysql:5.7.29
+    restart: always
+    tty: true
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USERNAME}
+      MYSQL_PASS: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysq
+      - ./mysql/catamate_main.sql:/docker-entrypoint-initdb.d/catamate_main.sql
+
+  web-server:
+   container_name: ${COMPOSE_PROJECT_NAME}_web_server
+    build:
+      dockerfile: Dockerfile
+      context: ./php
+    restart: always
+    depends_on:
+      - mysql
+    volumes:
+      - ./src/:/var/www/html/
+    ports:
+      - "80:80"
+      - "3000:3000"
+      - "3001:3001"
+    working_dir: /var/www/html
+
+  npm:
+    image: node:13.7
+    container_name: ${COMPOSE_PROJECT_NAME}_npm
+    volumes:
+      - ./src:/var/www/html
+    working_dir: /var/www/html
+    entrypoint: ['npm']
+
+  phpmyadmin:
+    container_name: ${COMPOSE_PROJECT_NAME}_phpmyadmin
+    image: phpmyadmin/phpmyadmin:5.0.1
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: secret
+    ports:
+      - "5000:80"
+    depends_on:
+      - mysql
+      - web-server
