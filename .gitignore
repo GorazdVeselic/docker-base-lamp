@@ -1,2 +1,7 @@
 .idea/
+
+#ignores src
 src/*
+
+# exception to the rule
+!src/.gitkeep

@@ -22,7 +22,7 @@ services:
       - ./mysql/catamate_main.sql:/docker-entrypoint-initdb.d/catamate_main.sql
 
   web-server:
-   container_name: ${COMPOSE_PROJECT_NAME}_web_server
+    container_name: ${COMPOSE_PROJECT_NAME}_web_server
     build:
       dockerfile: Dockerfile
       context: ./php
@@ -30,7 +30,7 @@ services:
     depends_on:
       - mysql
     volumes:
-      - ./src/:/var/www/html/
+      - ./../src/:/var/www/html/
     ports:
       - "80:80"
       - "3000:3000"
@@ -41,7 +41,7 @@ services:
     image: node:13.7
     container_name: ${COMPOSE_PROJECT_NAME}_npm
     volumes:
-      - ./src:/var/www/html
+      - ./../src:/var/www/html
     working_dir: /var/www/html
     entrypoint: ['npm']
 
